@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -o pipefail
+
 # Required since https://github.blog/2022-04-12-git-security-vulnerability-announced
 git config --global --add safe.directory $GITHUB_WORKSPACE
 

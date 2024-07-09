@@ -43,4 +43,4 @@ branding:
   icon: 'send'
 runs:
   using: 'docker'
-  image: 'Dockerfile'
+  image: docker://ghcr.io/wzieba/firebase-distribution-github-action:sha-344aa66

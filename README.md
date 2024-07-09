@@ -9,7 +9,7 @@ This action uploads artifacts (.apk,.aab or .ipa) to Firebase App Distribution.
 
 ### `appId`
 
-**Required** App id can be found on the General Settings page
+**Required** App id can be found in the Firebase console in your Projects Settings, under Your apps. It is in the following format 1:1234567890123942955466829:android:1234567890abc123abc123
 
 ### `token`
 
@@ -53,6 +53,20 @@ Specify the release note path to a plain text file.
 ### `debug`
 
 Flag that can be included to print verbose log output. Default value is `false`
+
+## Outputs
+
+### `FIREBASE_CONSOLE_URI`
+
+Link to uploaded release in the Firebase console.
+
+### `TESTING_URI`
+
+Link to share release with testers who have access.
+
+### `BINARY_DOWNLOAD_URI`
+
+Link to download the release binary (link expires in 1 hour).
 
 ## Sample usage
 
