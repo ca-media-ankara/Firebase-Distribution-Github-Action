@@ -35,7 +35,7 @@ if [ -n "${INPUT_TOKEN}" ] ; then
     export FIREBASE_TOKEN="${INPUT_TOKEN}"
 fi
 
-output=$(firebase \
+firebase \
         appdistribution:distribute \
         "$INPUT_FILE" \
         --app "$INPUT_APPID" \
@@ -43,22 +43,16 @@ output=$(firebase \
         --testers "$INPUT_TESTERS" \
         ${RELEASE_NOTES:+ --release-notes "${RELEASE_NOTES}"} \
         ${INPUT_RELEASENOTESFILE:+ --release-notes-file "${RELEASE_NOTES_FILE}"} \
-        $( (( $INPUT_DEBUG )) && printf %s '--debug' ))
+	$( (( $INPUT_DEBUG )) && printf %s '--debug' ) |
+{
+    while read -r line; do
+      echo $line
 
-status=$?
-
-echo "1"
-echo $output
-echo "2"
-
-if [ -n "${INPUT_TOKEN}" ] ; then
-    echo ${TOKEN_DEPRECATED_WARNING_MESSAGE}
-fi
-
-release_url=$(echo $output | grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" | sed -n 1p )
-share_url=$(echo $output | grep -Eo "(http|https)://[a-zA-Z0-9./?=_%:-]*" | sed -n 2p )
-
-echo "release_url=$release_url" >> $GITHUB_OUTPUT
-echo "share_url=$share_url" >> $GITHUB_OUTPUT
-
-exit $status
+      if [[ $line == *"View this release in the Firebase console"* ]]; then
+        CONSOLE_URI=$(echo "$line" | sed -e 's/.*: //' -e 's/^ *//;s/ *$//')
+        echo "release_url=$CONSOLE_URI" >> $GITHUB_OUTPUT
+      elif [[ $line == *"Share this release with testers who have access"* ]]; then
+        TESTING_URI=$(echo "$line" | sed -e 's/.*: //' -e 's/^ *//;s/ *$//')
+        echo "share_url=$TESTING_URI" >> $GITHUB_OUTPUT
+    done
+}
